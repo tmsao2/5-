@@ -30,12 +30,12 @@ private:
 	bool CommandInit();
 	bool SwapChainInit();
 	bool RTInit();
+	void ExecuteCommand();
+	void WaitFence();
 public:
 	Dx12Wrapper(HWND hwnd);
 	~Dx12Wrapper();
 	void Init();
 	void Update();
-	void ExecuteCommand();
-	void WaitFence();
 };
 

@@ -73,6 +73,7 @@ void Application::Run()
 	MSG msg;
 	while (true)
 	{
+		_dx12->Update();
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);//仮想キー関連の変換

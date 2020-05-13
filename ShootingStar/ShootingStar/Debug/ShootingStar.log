@@ -1,4 +1,14 @@
 ﻿  Application.cpp
   Dx12Wrapper.cpp
+  Enemy.cpp
+  Geometry.cpp
+  Input.cpp
+  main.cpp
+  Object.cpp
+  Player.cpp
+  TextureResource.cpp
+d:\ゲーム開発\5月制作課題\dinosaur\shootingstar\shootingstar\textureresource.cpp(95): warning C4267: '=': 'size_t' から 'UINT16' に変換しました。データが失われているかもしれません。
+d:\ゲーム開発\5月制作課題\dinosaur\shootingstar\shootingstar\textureresource.cpp(96): warning C4267: '=': 'size_t' から 'UINT16' に変換しました。データが失われているかもしれません。
+d:\ゲーム開発\5月制作課題\dinosaur\shootingstar\shootingstar\textureresource.cpp(249): warning C4293: '<<': シフト数が負の値であるか、大きすぎます。定義されていない動作です
   コードを生成中...
   ShootingStar.vcxproj -> D:\ゲーム開発\5月制作課題\dinosaur\ShootingStar\Debug\ShootingStar.exe

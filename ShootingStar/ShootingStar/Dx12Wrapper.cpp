@@ -123,8 +123,7 @@ Dx12Wrapper::~Dx12Wrapper()
 
 void Dx12Wrapper::Init()
 {
-	HRESULT result = S_OK;
-
+	
 	//デバッグレイヤーの起動
 	ID3D12Debug* debugLayer;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugLayer))))
@@ -142,13 +141,32 @@ void Dx12Wrapper::Init()
 
 void Dx12Wrapper::Update()
 {
-	auto heapStart = _rtvHeap->GetCPUDescriptorHandleForHeapStart();
 	float clearColor[] = { 1.0f,0.0f,0.0f,1.0f };//クリアカラー設定 
+
 	_cmdAllocator->Reset();//アロケータリセット 
 	_cmdList->Reset(_cmdAllocator.Get(), nullptr);//コマンドリストリセット 
+
+	auto bbIndex = _swapchain->GetCurrentBackBufferIndex();
+	auto heapStart = _rtvHeap->GetCPUDescriptorHandleForHeapStart();
+	auto heapSize = _dev->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	heapStart.ptr = heapStart.ptr + bbIndex * heapSize;
+
+	D3D12_RESOURCE_BARRIER BarrierDesc = {};
+	BarrierDesc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	BarrierDesc.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	BarrierDesc.Transition.pResource = _renderTargets[bbIndex].Get();
+	BarrierDesc.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	BarrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	BarrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	_cmdList->ResourceBarrier(1, &BarrierDesc);
+
 	_cmdList->OMSetRenderTargets(1, &heapStart, false, nullptr);//レンダーターゲット設定 
 	_cmdList->ClearRenderTargetView(heapStart, clearColor, 0, nullptr);//クリア 
 
+	BarrierDesc.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	BarrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	_cmdList->ResourceBarrier(1, &BarrierDesc);
+	_cmdList->Close();//コマンドのクローズ 
 	ExecuteCommand();
 	WaitFence();
 	_swapchain->Present(0, 0);
