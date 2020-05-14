@@ -69,4 +69,7 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="PLShader.hlsl" />
+  </ItemGroup>
 </Project>

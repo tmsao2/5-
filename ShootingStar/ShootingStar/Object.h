@@ -8,14 +8,16 @@
 #include <map>
 #include <wrl.h>
 
+struct PriVertex
+{
+	DirectX::XMFLOAT3 pos;
+	DirectX::XMFLOAT3 normal;
+	DirectX::XMFLOAT2 uv;
+};
+
 class Object
 {
 protected:
-	//頂点バッファビュー
-	D3D12_VERTEX_BUFFER_VIEW _vbView = {};
-	//インデックスバッファビュー
-	D3D12_INDEX_BUFFER_VIEW _ibView = {};
-
 	//ルートシグネチャ
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> _rootSignature;
 
