@@ -11,6 +11,7 @@ using namespace DirectX;
 using namespace Microsoft::WRL;
 
 class Player;
+class Input;
 
 struct WVPMatrix {
 	XMMATRIX world;
@@ -67,6 +68,7 @@ private:
 	XMFLOAT3 target;
 
 	std::shared_ptr<Player> _pl;
+	std::shared_ptr<Input> _input;
 
 	bool DeviceInit();
 	bool CommandInit();
@@ -77,6 +79,7 @@ private:
 
 	void ExecuteCommand();
 	void WaitFence();
+	void CameraMove();
 public:
 	Dx12Wrapper(HWND hwnd);
 	~Dx12Wrapper();

@@ -20,7 +20,7 @@ bool Object::CreatePipeLine(Microsoft::WRL::ComPtr<ID3D12Device> dev, std::vecto
 	gpsDesc.DepthStencilState.DepthEnable = true;
 	gpsDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
 	gpsDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
-	gpsDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	gpsDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
 
 	//ラスタライザ
 	//ラスタライザの設定
@@ -122,7 +122,7 @@ bool Object::CreateRootSignature(Microsoft::WRL::ComPtr<ID3D12Device> dev)
 	{
 		return false;
 	}
-	return false;
+	return true;
 }
 
 Object::Object(Microsoft::WRL::ComPtr<ID3D12Device> dev)

@@ -4,6 +4,7 @@
 #include "Dx12Wrapper.h"
 #include "Application.h"
 #include "Player.h"
+#include "Input.h"
 
 bool Dx12Wrapper::DeviceInit()
 {
@@ -257,6 +258,7 @@ void Dx12Wrapper::Init()
 	_dev->CreateFence(_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(_fence.GetAddressOf()));
 
 	_pl.reset(new Player(_dev.Get()));
+	_input.reset(new Input());
 
 	auto wsize = Application::Instance().GetWindowSize();
 	//ビューポート設定
@@ -275,9 +277,9 @@ void Dx12Wrapper::Init()
 
 void Dx12Wrapper::Update()
 {
-	*_mapWvp = _wvp;
 	//_pl->Update();
-	float clearColor[] = { 1.0f,0.0f,0.0f,1.0f };//クリアカラー設定 
+	CameraMove();
+	float clearColor[] = { 0.0f,0.0f,0.0f,1.0f };//クリアカラー設定 
 
 	_cmdAllocator->Reset();//アロケータリセット 
 	_cmdList->Reset(_cmdAllocator.Get(), nullptr);//コマンドリストリセット 
@@ -326,6 +328,68 @@ void Dx12Wrapper::WaitFence()
 		WaitForSingleObject(event, INFINITE);
 		CloseHandle(event);
 	}
+}
+
+void Dx12Wrapper::CameraMove()
+{
+	XMFLOAT3 up(0, 1, 0);		//上ベクトル
+	float speed = 0.05f;
+
+	if (_input->GetKey()['W'] & 0x80)
+	{
+		auto mat = XMMatrixTranslation(0, speed, 0);
+		_wvp.eye = XMVector3Transform(_wvp.eye, mat);
+		target = XMFLOAT3(target.x, target.y + speed, target.z);
+	}
+	if (_input->GetKey()['A'] & 0x80)
+	{
+		auto mat = XMMatrixTranslation(-speed, 0, 0);
+		_wvp.eye = XMVector3Transform(_wvp.eye, mat);
+		target = XMFLOAT3(target.x - speed, target.y, target.z);
+	}
+	if (_input->GetKey()['S'] & 0x80)
+	{
+		auto mat = XMMatrixTranslation(0, -speed, 0);
+		_wvp.eye = XMVector3Transform(_wvp.eye, mat);
+		target = XMFLOAT3(target.x, target.y - speed, target.z);
+	}
+	if (_input->GetKey()['D'] & 0x80)
+	{
+		auto mat = XMMatrixTranslation(speed, 0, 0);
+		_wvp.eye = XMVector3Transform(_wvp.eye, mat);
+		target = XMFLOAT3(target.x + speed, target.y, target.z);
+	}
+	if (_input->GetKey()[VK_UP] & 0x80)
+	{
+		auto mat = XMMatrixTranslation(0, 0, speed);
+		_wvp.eye = XMVector3Transform(_wvp.eye, mat);
+		target = XMFLOAT3(target.x, target.y, target.z + speed);
+	}
+	if (_input->GetKey()[VK_DOWN] & 0x80)
+	{
+		auto mat = XMMatrixTranslation(0, 0, -speed);
+		_wvp.eye = XMVector3Transform(_wvp.eye, mat);
+		target = XMFLOAT3(target.x, target.y, target.z - speed);
+	}
+	if (_input->GetKey()[VK_LEFT] & 0x80)
+	{
+		auto mat = XMMatrixRotationY(speed);
+
+		_wvp.eye = XMVector3Transform(_wvp.eye, mat);
+	}
+	if (_input->GetKey()[VK_RIGHT] & 0x80)
+	{
+		auto mat = XMMatrixRotationY(-speed);
+
+		_wvp.eye = XMVector3Transform(_wvp.eye, mat);
+	}
+
+	_wvp.view = XMMatrixLookAtLH(
+		_wvp.eye,
+		XMLoadFloat3(&target),
+		XMLoadFloat3(&up));
+
+	*_mapWvp = _wvp;
 }
 
 
